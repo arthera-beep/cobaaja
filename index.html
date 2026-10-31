@@ -1,758 +1,1201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gabrun - Fast and Secure Business Payments</title>
+  <title>LAYERS OF TIME — The show runs on our clock.</title>
+  <meta name="description" content="Show studio in Singapore. We design light, video and sound for live rooms, and we build the engine that keeps all of it in sync.">
   <style>
     :root {
-      --primary: #185aeb;
-      --primary-dark: #0f44bc;
-      --primary-light: #3b82f6;
-      --accent: #00d2ff;
-      --bg-dark: #071739;
-      --text-dark: #111827;
-      --text-muted: #6b7280;
-      --card-bg: #ffffff;
-      --border-color: #e5e7eb;
+      color-scheme: dark;
+      --bg: #08090b;
+      --panel: #0e1013;
+      --panel-2: #14171b;
+      --fg: #e9ecef;
+      --muted: #8a9099;
+      --faint: #767c85;
+      --line: rgba(233, 236, 239, 0.12);
+      --line-strong: rgba(233, 236, 239, 0.28);
+      --signal: #d4178f;
+      --signal-live: #ff29c4;
+      --signal-fill: #8f0e66;
+      --parallax: #22d3ee;
+      --parsec: #a3e635;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+      --ease: cubic-bezier(.22, .61, .36, 1);
+      --d-fast: .16s;
+      --d-base: .32s;
+      --header-h: 64px;
+      --gutter: clamp(16px, 3vw, 48px);
+      --max: 1540px;
+      --fs-hero: clamp(2.75rem, 7.8vw, 7.5rem);
+      --fs-h2: clamp(1.85rem, 3.8vw, 3.5rem);
+      --fs-h3: clamp(1.2rem, 1.8vw, 1.75rem);
+      --fs-label: 0.75rem;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
     }
 
     body {
-      background-color: #f8fafc;
-      color: var(--text-dark);
-      line-height: 1.5;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    .navbar {
+    ::selection {
+      background: var(--signal-fill);
+      color: #ffffff;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--signal-live);
+      outline-offset: 3px;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-size: var(--fs-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .t-muted { color: var(--muted); }
+    .t-faint { color: var(--faint); }
+    .t-num { font-variant-numeric: tabular-nums; }
+    .signal { color: var(--signal-live); }
+    .cyan { color: var(--parallax); }
+    .lime { color: var(--parsec); }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: middle;
+      background: var(--signal-live);
+      box-shadow: 0 0 10px var(--signal-live);
+      animation: pulse 2s var(--ease) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 9, 11, 0.88);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+    }
+
+    .header__row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.25rem 2rem;
-      background: transparent;
-      max-width: 1200px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 10;
+      width: 100%;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #ffffff;
+      gap: 0.85rem;
       text-decoration: none;
+      color: var(--fg);
     }
 
-    .brand-icon {
-      width: 28px;
-      height: 28px;
-      background: #00e5ff;
-      border-radius: 6px;
+    .brand__mark {
+      width: 22px;
+      height: 26px;
+      fill: currentColor;
+    }
+
+    .brand__title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .header__status {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid var(--line);
+      padding: 0.35rem 0.85rem;
+      border-radius: 2px;
+      background: rgba(14, 16, 19, 0.6);
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color var(--d-fast);
+    }
+
+    .header__status:hover {
+      border-color: var(--line-strong);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav__link {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--d-fast);
+      position: relative;
+    }
+
+    .nav__link:hover {
+      color: var(--fg);
+    }
+
+    .nav__link::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--signal-live);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform var(--d-base) var(--ease);
+    }
+
+    .nav__link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    /* Buttons */
+    .btn {
+      border: 1px solid var(--line-strong);
+      font-family: var(--font-mono);
+      font-size: var(--fs-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      padding: 0.85rem 1.4rem;
+      color: var(--fg);
+      background: transparent;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      color: var(--bg-dark);
-      font-weight: 900;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: #d1d5db;
+      gap: 0.75rem;
       text-decoration: none;
-      font-size: 0.95rem;
-      transition: color 0.2s;
+      transition: all var(--d-fast) var(--ease);
     }
 
-    .nav-links a:hover {
-      color: #ffffff;
+    .btn:hover {
+      border-color: var(--fg);
+      background: rgba(233, 236, 239, 0.06);
     }
 
-    .nav-btn {
-      background: #ffffff;
-      color: var(--primary);
-      padding: 0.5rem 1.25rem;
-      border-radius: 9999px;
-      border: none;
+    .btn--primary {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
       font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
     }
 
-    .nav-btn:hover {
-      background: #f1f5f9;
-      transform: translateY(-1px);
-    }
-
-    .hero-wrapper {
-      background: radial-gradient(circle at 50% 20%, #1e40af 0%, #0c2356 60%, #071739 100%);
+    .btn--primary:hover {
+      background: var(--signal-live);
+      border-color: var(--signal-live);
       color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 41, 196, 0.4);
+    }
+
+    .btn--cyan:hover {
+      border-color: var(--parallax);
+      color: var(--parallax);
+      box-shadow: 0 0 15px rgba(34, 211, 238, 0.25);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding-top: calc(var(--header-h) + 2rem);
       padding-bottom: 5rem;
+      border-bottom: 1px solid var(--line);
       position: relative;
       overflow: hidden;
+      min-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
     }
 
-    .hero-glow {
+    .hero__stage {
       position: absolute;
-      top: -150px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 350px;
-      background: rgba(0, 229, 255, 0.25);
-      filter: blur(120px);
+      inset: 0;
+      perspective: 1200px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      opacity: 0.85;
+    }
+
+    .hero__rig {
+      width: clamp(340px, 55vw, 680px);
+      height: clamp(340px, 55vw, 680px);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+      position: relative;
+    }
+
+    .rig-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .rig-fixture {
+      fill: none;
+      stroke: var(--line-strong);
+      stroke-width: 1.5;
+      transition: stroke 0.3s, fill 0.3s, filter 0.3s;
+    }
+
+    .rig-fixture.active {
+      stroke: var(--signal-live);
+      fill: rgba(255, 41, 196, 0.12);
+      filter: drop-shadow(0 0 12px var(--signal-live));
+    }
+
+    .rig-beam {
+      opacity: 0.18;
+      mix-blend-mode: screen;
       pointer-events: none;
     }
 
-    .hero {
-      max-width: 900px;
-      margin: 3rem auto 0;
-      text-align: center;
-      padding: 0 1.5rem;
+    /* Telemetry 4-Cell Readout Grid */
+    .hero__readout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-bottom: 3.5rem;
       position: relative;
       z-index: 2;
     }
 
-    .hero-badge {
-      display: inline-block;
-      padding: 0.35rem 1rem;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      margin-bottom: 1.25rem;
-      backdrop-filter: blur(8px);
-    }
-
-    .hero h1 {
-      font-size: 2.75rem;
-      line-height: 1.2;
-      font-weight: 800;
-      margin-bottom: 1.25rem;
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      color: #cbd5e1;
-      max-width: 650px;
-      margin: 0 auto 2rem;
-    }
-
-    .cta-form {
-      display: flex;
-      max-width: 480px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 0.35rem;
-      border-radius: 9999px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    .cta-form input {
-      flex: 1;
-      border: none;
-      padding: 0.75rem 1.25rem;
-      font-size: 0.95rem;
-      outline: none;
-      border-radius: 9999px;
-      color: var(--text-dark);
-    }
-
-    .cta-form button {
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 0.75rem 1.75rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .cta-form button:hover {
-      background: var(--primary-dark);
-    }
-
-    .cta-feedback {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #38bdf8;
-      min-height: 1.5rem;
-    }
-
-    .hero-cards-preview {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 3.5rem;
-      flex-wrap: wrap;
-    }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      backdrop-filter: blur(12px);
-      border-radius: 14px;
+    .readout__cell {
+      background: var(--bg);
       padding: 1.25rem 1.5rem;
-      text-align: left;
-      min-width: 220px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    }
-
-    .glass-card .title {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #94a3b8;
-    }
-
-    .glass-card .amount {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin: 0.25rem 0;
-    }
-
-    .glass-card .tag {
-      font-size: 0.75rem;
-      color: #34d399;
-      display: inline-block;
-    }
-
-    .partners {
-      background: #ffffff;
-      padding: 2.5rem 1.5rem;
-      border-bottom: 1px solid var(--border-color);
-      text-align: center;
-    }
-
-    .partners p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-    }
-
-    .partner-logos {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 2.5rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 0.4rem;
     }
 
-    .logo-item {
-      font-weight: 700;
-      color: #94a3b8;
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
-      transition: color 0.2s;
+    .readout__label {
+      color: var(--muted);
+      font-size: 0.72rem;
     }
 
-    .logo-item:hover {
-      color: #475569;
+    .readout__value {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--fg);
     }
 
-    .section-container {
+    .hero__content {
+      position: relative;
+      z-index: 2;
       max-width: 1100px;
-      margin: 4.5rem auto;
-      padding: 0 1.5rem;
     }
 
-    .section-header {
-      text-align: center;
-      margin-bottom: 3rem;
+    .hero__label {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
     }
 
-    .section-header h2 {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
+    .hero__title {
+      font-size: var(--fs-hero);
+      line-height: 0.95;
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      margin-bottom: 2rem;
+      text-wrap: balance;
     }
 
-    .section-header p {
-      color: var(--text-muted);
-      font-size: 1rem;
-      max-width: 580px;
-      margin: 0 auto;
+    .hero__title span {
+      display: block;
     }
 
-    .audience-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+    .hero__title .accent-span {
+      color: #ffffff;
+      background: linear-gradient(180deg, #ffffff 30%, #767c85 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .audience-card {
-      background: #ffffff;
-      border: 2px solid var(--border-color);
-      border-radius: 16px;
-      padding: 2rem 1.75rem;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.25s ease;
+    .hero__dek {
+      font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+      line-height: 1.35;
+      color: var(--fg);
+      max-width: 32em;
+      letter-spacing: -0.01em;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero__cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+    }
+
+    .hero__foot {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      padding-top: 1.5rem;
+    }
+
+    /* Section Headings */
+    .section {
+      padding-block: clamp(4rem, 8vw, 8rem);
+      border-bottom: 1px solid var(--line);
       position: relative;
     }
 
-    .audience-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
-    }
-
-    .audience-card.active {
-      background: #185aeb;
-      color: #ffffff;
-      border-color: #185aeb;
-      box-shadow: 0 16px 32px rgba(24, 90, 235, 0.25);
-    }
-
-    .audience-card h3 {
-      font-size: 1.35rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .audience-card p {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-    }
-
-    .audience-card.active p {
-      color: #dbeafe;
-    }
-
-    .audience-card .badge-metric {
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 1.25rem;
-    }
-
-    .audience-card .card-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .audience-card.active .card-action {
-      color: #ffffff;
-      text-decoration: underline;
-    }
-
-    .dual-showcase {
+    .head {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+      align-items: baseline;
+      border-top: 1px solid var(--line);
+      padding-top: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .head__idx {
+      grid-column: span 3;
+      display: flex;
       align-items: center;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 3rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      gap: 0.75rem;
+    }
+
+    .head__title {
+      grid-column: span 9;
+      font-size: var(--fs-h2);
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+    }
+
+    @media (max-width: 768px) {
+      .head {
+        display: block;
+      }
+      .head__idx {
+        margin-bottom: 1rem;
+      }
+    }
+
+    /* Worklist (CUE 01) */
+    .worklist {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .work__row {
+      display: grid;
+      grid-template-columns: 80px 1.4fr 1fr 140px;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 1.75rem 0;
+      border-top: 1px solid var(--line);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s, padding-left 0.2s;
+      cursor: pointer;
+    }
+
+    .work__row:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .work__row:hover {
+      background: rgba(233, 236, 239, 0.03);
+      padding-left: 0.75rem;
+    }
+
+    .work__idx {
+      color: var(--muted);
+    }
+
+    .work__name {
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .work__meta {
+      color: var(--muted);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .work__action {
+      text-align: right;
     }
 
     @media (max-width: 860px) {
-      .dual-showcase {
+      .work__row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      .work__action {
+        text-align: left;
+        margin-top: 0.5rem;
+      }
+    }
+
+    /* Show Control Console (CUE 02) */
+    .console-panel {
+      background: var(--panel);
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .console-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .console-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .showcase-text h2 {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1.25;
-      margin-bottom: 1rem;
-    }
-
-    .showcase-text p {
-      color: var(--text-muted);
+    .fixture-rack {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
       margin-bottom: 1.5rem;
-      font-size: 0.95rem;
     }
 
-    .invoice-card {
-      background: #f8fafc;
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 1.75rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    .fixture-btn {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 1.2rem 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--d-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .invoice-header {
+    .fixture-btn.on {
+      border-color: var(--signal-live);
+      background: rgba(255, 41, 196, 0.1);
+      box-shadow: 0 0 16px rgba(255, 41, 196, 0.25);
+    }
+
+    .fixture-btn .f-num {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .fixture-btn.on .f-num {
+      color: var(--signal-live);
+    }
+
+    .fixture-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #2b3038;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .fixture-btn.on .fixture-indicator {
+      background: var(--signal-live);
+      box-shadow: 0 0 10px var(--signal-live);
+    }
+
+    .engine-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .control-row {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      padding: 1.25rem 1.5rem;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .control-label-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.25rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid #e2e8f0;
     }
 
-    .invoice-badge {
-      background: #e0e7ff;
-      color: #4338ca;
+    .bpm-slider {
+      width: 100%;
+      accent-color: var(--signal-live);
+      cursor: pointer;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .log-box {
+      background: #050607;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 1rem 1.25rem;
+      height: 150px;
+      overflow-y: auto;
       font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
+      color: var(--muted);
+      line-height: 1.6;
     }
 
-    .invoice-total {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 1rem;
-    }
-
-    .form-group {
-      margin-bottom: 0.85rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.55rem 0.75rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      background: #ffffff;
-    }
-
-    .form-row {
+    .log-entry {
       display: flex;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
-    .pay-btn {
+    .log-entry .time {
+      color: var(--faint);
+    }
+
+    .log-entry.active {
+      color: var(--parallax);
+    }
+
+    /* Specs Sheet Table */
+    .spec-table {
       width: 100%;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      margin-top: 0.5rem;
-      transition: background 0.2s;
+      border-collapse: collapse;
+      margin-top: 2rem;
     }
 
-    .pay-btn:hover {
-      background: var(--primary-dark);
+    .spec-table th, .spec-table td {
+      border-top: 1px solid var(--line);
+      padding: 1.25rem 0;
+      text-align: left;
     }
 
-    .payment-status-box {
+    .spec-table th {
+      color: var(--muted);
+      font-weight: 400;
+      width: 30%;
+    }
+
+    .spec-table td {
+      color: var(--fg);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 5rem 0 4rem;
+      border-top: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer__desc {
+      color: var(--muted);
+      max-width: 24em;
       margin-top: 1rem;
-      padding: 0.75rem;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      text-align: center;
-      display: none;
+      font-size: 0.95rem;
     }
 
-    .payment-status-box.success {
-      display: block;
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
+    .footer__col-title {
+      color: var(--muted);
+      margin-bottom: 1.25rem;
     }
 
-    .security-section {
-      background: #0c1c44;
-      color: #ffffff;
-      border-radius: 20px;
-      padding: 3.5rem 2rem;
-      text-align: center;
-      margin-top: 4rem;
-      position: relative;
-    }
-
-    .security-section h2 {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.75rem;
-    }
-
-    .security-section p {
-      color: #94a3b8;
-      max-width: 600px;
-      margin: 0 auto 2.5rem;
-    }
-
-    .security-hub {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
-      padding: 2rem 2.5rem;
-      backdrop-filter: blur(10px);
-    }
-
-    .hub-balance {
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #00e5ff;
-    }
-
-    .hub-label {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      margin-bottom: 1rem;
-    }
-
-    .hub-actions {
+    .footer__list {
+      list-style: none;
       display: flex;
+      flex-direction: column;
       gap: 0.75rem;
     }
 
-    .hub-btn {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: background 0.2s;
+    .footer__list a {
+      color: var(--fg);
+      text-decoration: none;
+      transition: color var(--d-fast);
     }
 
-    .hub-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
+    .footer__list a:hover {
+      color: var(--signal-live);
     }
 
-    footer {
-      text-align: center;
-      padding: 3rem 1.5rem;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    .footer__bottom {
+      border-top: 1px solid var(--line);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--faint);
+      flex-wrap: wrap;
+      gap: 1rem;
     }
   </style>
 </head>
 <body>
 
-  <div class="hero-wrapper">
-    <div class="hero-glow"></div>
-    
-    <header class="navbar">
+  <!-- Precision Header -->
+  <header class="header">
+    <div class="wrap header__row">
       <a href="#" class="brand">
-        <span class="brand-icon">G</span> Gabrun
+        <svg class="brand__mark" viewBox="0 0 1350 1650" role="img" aria-label="LAYERS OF TIME">
+          <path d="M0 0h150v750H0z M0 900h150v750H0z M1200 900h150v750h-150z M300 900h150v600h600v150H300z M1200 0h150v750h-150z M300 0h750v150H750v600H600V150H300z M300 300h150v450H300z M600 900h150v450H600z M900 900h150v450H900z M900 300h150v450H900z"></path>
+        </svg>
+        <span class="brand__title">LAYERS OF TIME</span>
       </a>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#pricing">Audience</a></li>
-        <li><a href="#security">Security</a></li>
-      </ul>
-      <button class="nav-btn" onclick="triggerAlert('Login modal: Sistem otentikasi siap dihubungkan.')">Sign In</button>
-    </header>
 
-    <div class="hero">
-      <span class="hero-badge">⚡ The Next-Gen Payment Engine</span>
-      <h1>Make Your Business Payment Fast and Secure, with Gabrun</h1>
-      <p>A smart, modern payment orchestration platform designed for speed, flexibility, and impenetrable security for growing businesses.</p>
+      <a href="#engine" class="header__status mono">
+        <span class="dot"></span>
+        <span id="navTimecode" class="t-num">03:42:18:14</span>
+        <span class="t-faint">GMT+7</span>
+        <span class="t-faint">·</span>
+        <span class="signal">SINGULARITY 0.9.9</span>
+      </a>
+
+      <nav class="nav">
+        <a href="#work" class="nav__link mono">Work</a>
+        <a href="#engine" class="nav__link mono">Engine</a>
+        <a href="#specs" class="nav__link mono">Specs</a>
+        <a href="#contact" class="nav__link mono">Contact</a>
+        <button class="btn btn--primary" onclick="triggerCueAll()">Trigger Cue</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero" id="hero">
       
-      <form class="cta-form" id="emailForm" onsubmit="handleCtaSubmit(event)">
-        <input type="email" id="userEmail" placeholder="Enter your business email..." required>
-        <button type="submit">Get Started</button>
-      </form>
-      <div id="ctaFeedback" class="cta-feedback"></div>
-
-      <div class="hero-cards-preview">
-        <div class="glass-card">
-          <div class="title">PayPal Payment</div>
-          <div class="amount">$3,050.00</div>
-          <span class="tag">✔ Received Successfully</span>
+      <!-- 3D Perspective Interactive Stage Background -->
+      <div class="hero__stage" id="stageContainer">
+        <div class="hero__rig" id="rig3d">
+          <svg class="rig-svg" viewBox="0 0 1350 1650">
+            <g id="rigBeams">
+              <line x1="75" y1="375" x2="675" y2="825" stroke="var(--signal-live)" stroke-width="2" class="rig-beam" id="beam0"></line>
+              <line x1="675" y1="75" x2="675" y2="825" stroke="var(--parallax)" stroke-width="2" class="rig-beam" id="beam1"></line>
+              <line x1="375" y1="525" x2="675" y2="825" stroke="var(--signal-live)" stroke-width="2" class="rig-beam" id="beam2"></line>
+              <line x1="975" y1="525" x2="675" y2="825" stroke="var(--signal-live)" stroke-width="2" class="rig-beam" id="beam3"></line>
+              <line x1="1275" y1="375" x2="675" y2="825" stroke="var(--parallax)" stroke-width="2" class="rig-beam" id="beam4"></line>
+              <line x1="75" y1="1275" x2="675" y2="825" stroke="var(--parallax)" stroke-width="2" class="rig-beam" id="beam5"></line>
+              <line x1="600" y1="1200" x2="675" y2="825" stroke="var(--signal-live)" stroke-width="2" class="rig-beam" id="beam6"></line>
+              <line x1="675" y1="1125" x2="675" y2="825" stroke="var(--signal-live)" stroke-width="2" class="rig-beam" id="beam7"></line>
+              <line x1="975" y1="1125" x2="675" y2="825" stroke="var(--signal-live)" stroke-width="2" class="rig-beam" id="beam8"></line>
+              <line x1="1275" y1="1275" x2="675" y2="825" stroke="var(--parallax)" stroke-width="2" class="rig-beam" id="beam9"></line>
+            </g>
+            <path id="fix0" class="rig-fixture active" d="M0 0h150v750H0z"></path>
+            <path id="fix1" class="rig-fixture" d="M300 0h750v150H750v600H600V150H300z"></path>
+            <path id="fix2" class="rig-fixture active" d="M300 300h150v450H300z"></path>
+            <path id="fix3" class="rig-fixture active" d="M900 300h150v450H900z"></path>
+            <path id="fix4" class="rig-fixture" d="M1200 0h150v750h-150z"></path>
+            <path id="fix5" class="rig-fixture" d="M0 900h150v750H0z"></path>
+            <path id="fix6" class="rig-fixture active" d="M300 900h150v600h600v150H300z"></path>
+            <path id="fix7" class="rig-fixture active" d="M600 900h150v450H600z"></path>
+            <path id="fix8" class="rig-fixture" d="M900 900h150v450H900z"></path>
+            <path id="fix9" class="rig-fixture active" d="M1200 900h150v750h-150z"></path>
+          </svg>
         </div>
-        <div class="glass-card">
-          <div class="title">Security Rating</div>
-          <div class="amount">99.98%</div>
-          <span class="tag">🛡 PCI-DSS Level 1</span>
-        </div>
-        <div class="glass-card">
-          <div class="title">Instant Payouts</div>
-          <div class="amount">1.2s</div>
-          <span class="tag">⚡ Real-time Settlement</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <section class="partners">
-    <p>Trusted By More Than +10,000 Users & Leading Companies</p>
-    <div class="partner-logos">
-      <div class="logo-item">PayPal</div>
-      <div class="logo-item">Notion</div>
-      <div class="logo-item">Slack</div>
-      <div class="logo-item">Loom</div>
-      <div class="logo-item">Monday.com</div>
-      <div class="logo-item">Afterpay</div>
-    </div>
-  </section>
-
-  <section class="section-container" id="features">
-    <div class="section-header">
-      <h2>Get The Most Powerful and Easy to Use Payment Software</h2>
-      <p>Tailored solutions built specifically for your scale, whether you are building your first MVP or scaling enterprise billing.</p>
-    </div>
-
-    <div class="audience-grid">
-      <div class="audience-card" onclick="selectCard(this, 'Start-ups')">
-        <span class="badge-metric">+2,400 Startups</span>
-        <h3>Start-ups</h3>
-        <p>Simple APIs, automated onboarding, and friction-free payment checkouts to launch fast.</p>
-        <span class="card-action">Select Plan &rarr;</span>
       </div>
 
-      <div class="audience-card active" onclick="selectCard(this, 'Freelancers')">
-        <span class="badge-metric">+6,800 Freelancers</span>
-        <h3>Freelancers</h3>
-        <p>Send branded invoices, accept global cards, and enjoy low fee transfers directly to your bank.</p>
-        <span class="card-action">Select Plan &rarr;</span>
-      </div>
-
-      <div class="audience-card" onclick="selectCard(this, 'Enterprises')">
-        <span class="badge-metric">+800 Enterprises</span>
-        <h3>Enterprises</h3>
-        <p>Multi-currency routing, high-volume batch processing, custom SLAs, and dedicated compliance.</p>
-        <span class="card-action">Select Plan &rarr;</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-container">
-    <div class="dual-showcase">
-      <div class="showcase-text">
-        <h2>Rewards That are Endlessly Rewarding For Every Transaction</h2>
-        <p>Earn cashback, get real-time exchange rates, and automate reconciliation directly into your balance with every customer invoice paid.</p>
-        <p>Try the live interactive invoice simulator on the right to test transaction confirmation feedback.</p>
-      </div>
-
-      <div class="invoice-card">
-        <div class="invoice-header">
-          <div>
-            <strong>Invoice #GB-8921</strong>
-            <div style="font-size: 0.8rem; color: #64748b;">Due Date: Today</div>
+      <div class="wrap">
+        <!-- Telemetry 4-Cell Readout Grid -->
+        <div class="hero__readout mono">
+          <div class="readout__cell">
+            <span class="readout__label">YOUR CLOCK</span>
+            <span class="readout__value"><b id="heroClock" class="t-num">03:42:18:14</b> <span class="t-muted">GMT+7</span></span>
           </div>
-          <span class="invoice-badge">PENDING PAYMENT</span>
+          <div class="readout__cell">
+            <span class="readout__label">NEXT NIGHT</span>
+            <span class="readout__value"><b>TORONTO</b> · Forbidden City · <span class="cyan t-num" id="countdownVal">5D 18H 22M</span></span>
+          </div>
+          <div class="readout__cell">
+            <span class="readout__label">SO FAR</span>
+            <span class="readout__value"><b class="t-num">49</b> NIGHTS · <b class="t-num">34</b> CITIES</span>
+          </div>
+          <div class="readout__cell">
+            <span class="readout__label"><span class="dot"></span> ON AIR</span>
+            <span class="readout__value"><b id="currentTrack">Jeff Mills – The Bells</b> · <span class="lime t-num" id="liveBpm">139.00</span> BPM · <span class="t-num" id="barCounter">021.2</span></span>
+          </div>
         </div>
 
-        <div class="invoice-total">$350.00 USD</div>
+        <div class="hero__content">
+          <span class="hero__label mono">The mark is a rig. Ten fixtures, replaying a night recorded through SINGULARITY.</span>
+          <h1 class="hero__title">
+            <span>The show runs</span>
+            <span class="accent-span">on our clock.</span>
+          </h1>
+          <p class="hero__dek">
+            We design light, video and sound for live rooms in Singapore and on tour, and we build the engine that keeps all of it in sync.
+          </p>
 
-        <form id="paymentForm" onsubmit="handlePayment(event)">
-          <div class="form-group">
-            <label>Card Number</label>
-            <input type="text" value="4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242" required>
+          <div class="hero__cta">
+            <a href="#work" class="btn btn--primary">Selected work</a>
+            <a href="#engine" class="btn btn--cyan">The software</a>
+            <button class="btn" onclick="testPulse()">Pulse Fixtures (BPM)</button>
           </div>
-          <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-              <label>Expiry Date</label>
-              <input type="text" value="12/28" required>
+
+          <div class="hero__foot mono">
+            <span>Show studio · Since 2018</span>
+            <span>Singapore 1°17'N 103°51'E</span>
+            <span>Own show-control engine</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Worklist Section (CUE 01) -->
+    <section class="section" id="work">
+      <div class="wrap">
+        <div class="head">
+          <div class="head__idx mono">
+            <span class="cyan">CUE 01</span>
+            <span class="t-muted">/ SELECTED WORK</span>
+          </div>
+          <h2 class="head__title">Rooms we have run.</h2>
+        </div>
+
+        <div class="worklist">
+          <div class="work__row" onclick="triggerRowSelect('INQUISITIVE · The Oriental Fury Tour', '20 venues · Tour 2026')">
+            <span class="work__idx mono">01</span>
+            <div class="work__name">INQUISITIVE · The Oriental Fury Tour</div>
+            <div class="work__meta mono">
+              <span>Tour · 2026</span>
+              <span>20 Venues</span>
+              <span class="cyan">Show Control, Visuals</span>
             </div>
-            <div class="form-group" style="flex: 1;">
-              <label>CVV</label>
-              <input type="password" value="888" maxlength="4" required>
-            </div>
+            <div class="work__action mono t-muted">Active Cue &rarr;</div>
           </div>
-          <button type="submit" id="payInvoiceBtn" class="pay-btn">Pay Invoice ($350.00)</button>
-        </form>
 
-        <div id="paymentResult" class="payment-status-box"></div>
-      </div>
-    </div>
-  </section>
+          <div class="work__row" onclick="triggerRowSelect('COLLECTIVE MINDS · Decibel Arena', 'Singapore · Arena 2026')">
+            <span class="work__idx mono">02</span>
+            <div class="work__name">COLLECTIVE MINDS · Decibel Arena</div>
+            <div class="work__meta mono">
+              <span>Arena · 2026</span>
+              <span>Singapore</span>
+              <span class="lime">Light & Laser Sync</span>
+            </div>
+            <div class="work__action mono t-muted">Active Cue &rarr;</div>
+          </div>
 
-  <section class="section-container" id="security">
-    <div class="security-section">
-      <h2>Keep Your Money Secure Always</h2>
-      <p>Bank-grade encryption, biometric confirmations, and instant anomaly fraud detection protecting your business assets 24/7.</p>
-      
-      <div class="security-hub">
-        <div class="hub-label">Total Vault Protection</div>
-        <div class="hub-balance" id="vaultDisplay">$3,050.00</div>
-        <div class="hub-label">Status: Active & Encrypted</div>
-        <div class="hub-actions">
-          <button class="hub-btn" onclick="simulateTransfer(50)">+ Quick Deposit ($50)</button>
-          <button class="hub-btn" onclick="simulateTransfer(-50)">- Withdraw ($50)</button>
+          <div class="work__row" onclick="triggerRowSelect('THUGSHOP X · The Warehouse Project', '6 Fixtures · Live Room 2025')">
+            <span class="work__idx mono">03</span>
+            <div class="work__name">THUGSHOP X · The Warehouse Project</div>
+            <div class="work__meta mono">
+              <span>Club · 2025</span>
+              <span>Indoor Arena</span>
+              <span class="cyan">Timecode Rack</span>
+            </div>
+            <div class="work__action mono t-muted">Active Cue &rarr;</div>
+          </div>
+
+          <div class="work__row" onclick="triggerRowSelect('SG60 · National Stadium Showcase', 'Singapore · Kinetic Rig 2025')">
+            <span class="work__idx mono">04</span>
+            <div class="work__name">SG60 · National Showcase</div>
+            <div class="work__meta mono">
+              <span>Special Event · 2025</span>
+              <span>Stadium</span>
+              <span class="signal">Kinetic LED Rig</span>
+            </div>
+            <div class="work__action mono t-muted">Active Cue &rarr;</div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer>
-    <p>&copy; 2026 Gabrun Payment Technologies, Inc. All rights reserved. Demo dummy prototype.</p>
+    <!-- Software Engine Section (CUE 02) -->
+    <section class="section" id="engine">
+      <div class="wrap">
+        <div class="head">
+          <div class="head__idx mono">
+            <span class="signal">CUE 02</span>
+            <span class="t-muted">/ SINGULARITY ENGINE</span>
+          </div>
+          <h2 class="head__title">The engine that drives the room.</h2>
+        </div>
+
+        <div class="console-panel">
+          <div class="console-header mono">
+            <div>
+              <span class="dot"></span>
+              <strong>SINGULARITY LIVE CONSOLE</strong>
+              <span class="t-muted">· RACK ID: SG-TIME-09</span>
+            </div>
+            <div class="t-muted">
+              SMPTE LTC: <span class="cyan" id="smpteTime">03:42:18:14</span> · ART-NET CH: 512
+            </div>
+          </div>
+
+          <div class="console-grid">
+            <div>
+              <div class="mono t-muted" style="margin-bottom: 0.75rem;">
+                FIXTURE CHANNELS (F01 - F10):
+              </div>
+              <div class="fixture-rack">
+                <button type="button" class="fixture-btn on" id="fb0" onclick="toggleFixture(0)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F01</span>
+                </button>
+                <button type="button" class="fixture-btn" id="fb1" onclick="toggleFixture(1)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F02</span>
+                </button>
+                <button type="button" class="fixture-btn on" id="fb2" onclick="toggleFixture(2)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F03</span>
+                </button>
+                <button type="button" class="fixture-btn on" id="fb3" onclick="toggleFixture(3)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F04</span>
+                </button>
+                <button type="button" class="fixture-btn" id="fb4" onclick="toggleFixture(4)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F05</span>
+                </button>
+                <button type="button" class="fixture-btn" id="fb5" onclick="toggleFixture(5)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F06</span>
+                </button>
+                <button type="button" class="fixture-btn on" id="fb6" onclick="toggleFixture(6)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F07</span>
+                </button>
+                <button type="button" class="fixture-btn on" id="fb7" onclick="toggleFixture(7)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F08</span>
+                </button>
+                <button type="button" class="fixture-btn" id="fb8" onclick="toggleFixture(8)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F09</span>
+                </button>
+                <button type="button" class="fixture-btn on" id="fb9" onclick="toggleFixture(9)">
+                  <span class="fixture-indicator"></span>
+                  <span class="f-num mono">F10</span>
+                </button>
+              </div>
+
+              <div class="action-row">
+                <button class="btn btn--primary" onclick="triggerStrobeAll()">⚡ All Strobe (Flash)</button>
+                <button class="btn btn--cyan" onclick="invertFixtures()">Invert Channels</button>
+                <button class="btn" onclick="blackoutToggle()">Blackout All</button>
+              </div>
+            </div>
+
+            <div class="engine-controls">
+              <div class="control-row">
+                <div class="control-label-row mono">
+                  <span>TEMPO CONTROL (BPM)</span>
+                  <span class="lime" id="bpmDisplay">139.00 BPM</span>
+                </div>
+                <input type="range" class="bpm-slider" id="bpmSlider" min="90" max="175" value="139" oninput="updateBpm(this.value)">
+              </div>
+
+              <div>
+                <div class="mono t-muted" style="margin-bottom: 0.5rem;">CUE LOG & OSC PACKETS:</div>
+                <div class="log-box mono" id="consoleLog">
+                  <div class="log-entry active"><span class="time">[03:42:18]</span> SINGULARITY Kernel initialized in master mode.</div>
+                  <div class="log-entry"><span class="time">[03:42:19]</span> 10 DMX universes patched over Art-Net.</div>
+                  <div class="log-entry"><span class="time">[03:42:20]</span> Timecode lock established at 60.00 fps.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Specs Section (CUE 03) -->
+    <section class="section" id="specs">
+      <div class="wrap">
+        <div class="head">
+          <div class="head__idx mono">
+            <span class="lime">CUE 03</span>
+            <span class="t-muted">/ SYSTEM SPECIFICATIONS</span>
+          </div>
+          <h2 class="head__title">Sub-millisecond synchronization.</h2>
+        </div>
+
+        <table class="spec-table mono">
+          <tbody>
+            <tr>
+              <th>TIME ENGINE</th>
+              <td>Internal precision hardware clock, drift &lt; 0.001 ms per 24 hours.</td>
+            </tr>
+            <tr>
+              <th>TIMECODE PROTOCOLS</th>
+              <td>SMPTE LTC (Audio Linear), Art-Net Timecode, MIDI Time Code (MTC), Ableton Link v3.</td>
+            </tr>
+            <tr>
+              <th>FIXTURE DISPATCH</th>
+              <td>sACN (E1.31) / Art-Net 4 / OSC / DMX512-A optical isolated transceiver.</td>
+            </tr>
+            <tr>
+              <th>PHYSICAL RIG FOOTPRINT</th>
+              <td>Ten-point structural aluminum truss with custom 3-axis yoke and strobe arrays.</td>
+            </tr>
+            <tr>
+              <th>LATENCY BENCHMARK</th>
+              <td>Hardware interrupt pipeline: 0.38 ms trigger-to-light response.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="contact">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <div class="brand">
+            <svg class="brand__mark" viewBox="0 0 1350 1650">
+              <path d="M0 0h150v750H0z M0 900h150v750H0z M1200 900h150v750h-150z M300 900h150v600h600v150H300z M1200 0h150v750h-150z M300 0h750v150H750v600H600V150H300z M300 300h150v450H300z M600 900h150v450H600z M900 900h150v450H900z M900 300h150v450H900z"></path>
+            </svg>
+            <span class="brand__title">LAYERS OF TIME</span>
+          </div>
+          <p class="footer__desc">
+            We design light, video and sound for live rooms in Singapore and on tour, and we build the engine that keeps all of it in sync.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer__col-title mono">STUDIO LOCATIONS</div>
+          <ul class="footer__list mono">
+            <li>Singapore · Central HQ</li>
+            <li>1°17'N 103°51'E</li>
+            <li>Toronto · Satellite Lab</li>
+            <li>hello@layersoftime.studio</li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer__col-title mono">NAVIGATION</div>
+          <ul class="footer__list mono">
+            <li><a href="#hero">The Rig</a></li>
+            <li><a href="#work">Selected Work</a></li>
+            <li><a href="#engine">Singularity Software</a></li>
+            <li><a href="#specs">Specifications</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom mono">
+        <span>&copy; 2026 LAYERS OF TIME PTE. LTD. ALL RIGHTS RESERVED.</span>
+        <span>BUILD V0.9.9 · THE SHOW RUNS ON OUR CLOCK</span>
+      </div>
+    </div>
   </footer>
 
   <script>
-    function handleCtaSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('userEmail').value;
-      const feedback = document.getElementById('ctaFeedback');
-      feedback.textContent = `Terima kasih! Undangan telah dikirim ke: ${email}`;
-      document.getElementById('userEmail').value = '';
+    let frame = 0;
+    function updateTimecode() {
+      const now = new Date();
+      frame = (frame + 1) % 60;
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const f = String(frame).padStart(2, '0');
+      const tc = `${h}:${m}:${s}:${f}`;
+
+      const navTc = document.getElementById('navTimecode');
+      const heroTc = document.getElementById('heroClock');
+      const smpteTc = document.getElementById('smpteTime');
+
+      if (navTc) navTc.textContent = tc;
+      if (heroTc) heroTc.textContent = tc;
+      if (smpteTc) smpteTc.textContent = tc;
+
+      requestAnimationFrame(updateTimecode);
+    }
+    requestAnimationFrame(updateTimecode);
+
+    let currentBar = 21.2;
+    setInterval(() => {
+      currentBar += 0.1;
+      if (currentBar >= 99.9) currentBar = 1.0;
+      const barEl = document.getElementById('barCounter');
+      if (barEl) barEl.textContent = currentBar.toFixed(1).padStart(5, '0');
+    }, 430);
+
+    const rig = document.getElementById('rig3d');
+    window.addEventListener('mousemove', (e) => {
+      if (!rig) return;
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * -20;
+      rig.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    const fixtureStates = [true, false, true, true, false, false, true, true, false, true];
+
+    function updateFixtureVisuals() {
+      for (let i = 0; i < 10; i++) {
+        const svgEl = document.getElementById(`fix${i}`);
+        const btnEl = document.getElementById(`fb${i}`);
+        const beamEl = document.getElementById(`beam${i}`);
+
+        if (fixtureStates[i]) {
+          if (svgEl) svgEl.classList.add('active');
+          if (btnEl) btnEl.classList.add('on');
+          if (beamEl) beamEl.style.opacity = '0.35';
+        } else {
+          if (svgEl) svgEl.classList.remove('active');
+          if (btnEl) btnEl.classList.remove('on');
+          if (beamEl) beamEl.style.opacity = '0.04';
+        }
+      }
     }
 
-    function selectCard(cardElement, planName) {
-      document.querySelectorAll('.audience-card').forEach(c => c.classList.remove('active'));
-      cardElement.classList.add('active');
-      const feedback = document.getElementById('ctaFeedback');
-      feedback.textContent = `Paket terpilih: ${planName}`;
+    function toggleFixture(index) {
+      fixtureStates[index] = !fixtureStates[index];
+      updateFixtureVisuals();
+      logEvent(`CH F0${index + 1} toggled -> ${fixtureStates[index] ? 'ON (Active)' : 'OFF (Standby)'}`);
     }
 
-    function handlePayment(e) {
-      e.preventDefault();
-      const btn = document.getElementById('payInvoiceBtn');
-      const resultBox = document.getElementById('paymentResult');
+    function invertFixtures() {
+      for (let i = 0; i < 10; i++) fixtureStates[i] = !fixtureStates[i];
+      updateFixtureVisuals();
+      logEvent('All channels inverted via master macro.');
+    }
 
-      btn.disabled = true;
-      btn.innerText = 'Memproses Transaksi...';
+    let isBlackout = false;
+    function blackoutToggle() {
+      isBlackout = !isBlackout;
+      for (let i = 0; i < 10; i++) fixtureStates[i] = !isBlackout;
+      updateFixtureVisuals();
+      logEvent(isBlackout ? 'BLACKOUT ENGAGED: All fixture intensities dropped to 0%.' : 'BLACKOUT CLEARED: Default rig cues restored.');
+    }
 
+    function triggerStrobeAll() {
+      logEvent('FLASH STROBE: High-intensity strobe executed across all universes.');
+      for (let i = 0; i < 10; i++) fixtureStates[i] = true;
+      updateFixtureVisuals();
       setTimeout(() => {
-        btn.disabled = false;
-        btn.innerText = 'Lakukan Pembayaran Lain';
-        resultBox.className = 'payment-status-box success';
-        resultBox.innerHTML = `✔ <strong>Payment Successfully!</strong><br>Invoice $350.00 USD berhasil dibayar pada ${new Date().toLocaleTimeString()}.`;
-      }, 1000);
+        for (let i = 0; i < 10; i++) fixtureStates[i] = (i % 2 === 0);
+        updateFixtureVisuals();
+      }, 300);
     }
 
-    let vaultBalance = 3050;
-    function simulateTransfer(amount) {
-      vaultBalance += amount;
-      document.getElementById('vaultDisplay').textContent = `$${vaultBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    function updateBpm(val) {
+      document.getElementById('bpmDisplay').textContent = `${parseFloat(val).toFixed(2)} BPM`;
+      document.getElementById('liveBpm').textContent = `${parseFloat(val).toFixed(2)}`;
+      logEvent(`Clock tempo shifted to ${val} BPM.`);
     }
 
-    function triggerAlert(msg) {
-      alert(msg);
+    function testPulse() {
+      triggerStrobeAll();
     }
+
+    function triggerCueAll() {
+      const hero = document.getElementById('hero');
+      hero.scrollIntoView({ behavior: 'smooth' });
+      triggerStrobeAll();
+    }
+
+    function triggerRowSelect(name, meta) {
+      document.getElementById('currentTrack').textContent = name;
+      logEvent(`CUE FIRED: [${name}] | ${meta}`);
+      triggerStrobeAll();
+    }
+
+    function logEvent(msg) {
+      const logBox = document.getElementById('consoleLog');
+      if (!logBox) return;
+      const now = new Date();
+      const timeStr = `[${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}]`;
+      const entry = document.createElement('div');
+      entry.className = 'log-entry active';
+      entry.innerHTML = `<span class="time">${timeStr}</span> ${msg}`;
+      logBox.insertBefore(entry, logBox.firstChild);
+    }
+
+    updateFixtureVisuals();
   </script>
 </body>
 </html>
