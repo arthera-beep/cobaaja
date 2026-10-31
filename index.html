@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gabrun - Fast and Secure Business Payments</title>
+  <style>
+    :root {
+      --primary: #185aeb;
+      --primary-dark: #0f44bc;
+      --primary-light: #3b82f6;
+      --accent: #00d2ff;
+      --bg-dark: #071739;
+      --text-dark: #111827;
+      --text-muted: #6b7280;
+      --card-bg: #ffffff;
+      --border-color: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      background: transparent;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: #00e5ff;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-dark);
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    .nav-btn {
+      background: #ffffff;
+      color: var(--primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .nav-btn:hover {
+      background: #f1f5f9;
+      transform: translateY(-1px);
+    }
+
+    .hero-wrapper {
+      background: radial-gradient(circle at 50% 20%, #1e40af 0%, #0c2356 60%, #071739 100%);
+      color: #ffffff;
+      padding-bottom: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 350px;
+      background: rgba(0, 229, 255, 0.25);
+      filter: blur(120px);
+      pointer-events: none;
+    }
+
+    .hero {
+      max-width: 900px;
+      margin: 3rem auto 0;
+      text-align: center;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      line-height: 1.2;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      max-width: 650px;
+      margin: 0 auto 2rem;
+    }
+
+    .cta-form {
+      display: flex;
+      max-width: 480px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 0.35rem;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .cta-form input {
+      flex: 1;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      outline: none;
+      border-radius: 9999px;
+      color: var(--text-dark);
+    }
+
+    .cta-form button {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.75rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .cta-form button:hover {
+      background: var(--primary-dark);
+    }
+
+    .cta-feedback {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      min-height: 1.5rem;
+    }
+
+    .hero-cards-preview {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+      flex-wrap: wrap;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+      min-width: 220px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .glass-card .title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+    }
+
+    .glass-card .amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0.25rem 0;
+    }
+
+    .glass-card .tag {
+      font-size: 0.75rem;
+      color: #34d399;
+      display: inline-block;
+    }
+
+    .partners {
+      background: #ffffff;
+      padding: 2.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .partners p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .partner-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .logo-item {
+      font-weight: 700;
+      color: #94a3b8;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      transition: color 0.2s;
+    }
+
+    .logo-item:hover {
+      color: #475569;
+    }
+
+    .section-container {
+      max-width: 1100px;
+      margin: 4.5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .audience-card {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem 1.75rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .audience-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .audience-card.active {
+      background: #185aeb;
+      color: #ffffff;
+      border-color: #185aeb;
+      box-shadow: 0 16px 32px rgba(24, 90, 235, 0.25);
+    }
+
+    .audience-card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .audience-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .audience-card.active p {
+      color: #dbeafe;
+    }
+
+    .audience-card .badge-metric {
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 1.25rem;
+    }
+
+    .audience-card .card-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .audience-card.active .card-action {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .dual-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    }
+
+    @media (max-width: 860px) {
+      .dual-showcase {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .showcase-text h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    .showcase-text p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .invoice-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .invoice-badge {
+      background: #e0e7ff;
+      color: #4338ca;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .invoice-total {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 0.85rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #ffffff;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .pay-btn {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .pay-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .payment-status-box {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      text-align: center;
+      display: none;
+    }
+
+    .payment-status-box.success {
+      display: block;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .security-section {
+      background: #0c1c44;
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 3.5rem 2rem;
+      text-align: center;
+      margin-top: 4rem;
+      position: relative;
+    }
+
+    .security-section h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .security-section p {
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .security-hub {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .hub-balance {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #00e5ff;
+    }
+
+    .hub-label {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+
+    .hub-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .hub-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+
+    .hub-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-wrapper">
+    <div class="hero-glow"></div>
+    
+    <header class="navbar">
+      <a href="#" class="brand">
+        <span class="brand-icon">G</span> Gabrun
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Audience</a></li>
+        <li><a href="#security">Security</a></li>
+      </ul>
+      <button class="nav-btn" onclick="triggerAlert('Login modal: Sistem otentikasi siap dihubungkan.')">Sign In</button>
+    </header>
+
+    <div class="hero">
+      <span class="hero-badge">⚡ The Next-Gen Payment Engine</span>
+      <h1>Make Your Business Payment Fast and Secure, with Gabrun</h1>
+      <p>A smart, modern payment orchestration platform designed for speed, flexibility, and impenetrable security for growing businesses.</p>
+      
+      <form class="cta-form" id="emailForm" onsubmit="handleCtaSubmit(event)">
+        <input type="email" id="userEmail" placeholder="Enter your business email..." required>
+        <button type="submit">Get Started</button>
+      </form>
+      <div id="ctaFeedback" class="cta-feedback"></div>
+
+      <div class="hero-cards-preview">
+        <div class="glass-card">
+          <div class="title">PayPal Payment</div>
+          <div class="amount">$3,050.00</div>
+          <span class="tag">✔ Received Successfully</span>
+        </div>
+        <div class="glass-card">
+          <div class="title">Security Rating</div>
+          <div class="amount">99.98%</div>
+          <span class="tag">🛡 PCI-DSS Level 1</span>
+        </div>
+        <div class="glass-card">
+          <div class="title">Instant Payouts</div>
+          <div class="amount">1.2s</div>
+          <span class="tag">⚡ Real-time Settlement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="partners">
+    <p>Trusted By More Than +10,000 Users & Leading Companies</p>
+    <div class="partner-logos">
+      <div class="logo-item">PayPal</div>
+      <div class="logo-item">Notion</div>
+      <div class="logo-item">Slack</div>
+      <div class="logo-item">Loom</div>
+      <div class="logo-item">Monday.com</div>
+      <div class="logo-item">Afterpay</div>
+    </div>
+  </section>
+
+  <section class="section-container" id="features">
+    <div class="section-header">
+      <h2>Get The Most Powerful and Easy to Use Payment Software</h2>
+      <p>Tailored solutions built specifically for your scale, whether you are building your first MVP or scaling enterprise billing.</p>
+    </div>
+
+    <div class="audience-grid">
+      <div class="audience-card" onclick="selectCard(this, 'Start-ups')">
+        <span class="badge-metric">+2,400 Startups</span>
+        <h3>Start-ups</h3>
+        <p>Simple APIs, automated onboarding, and friction-free payment checkouts to launch fast.</p>
+        <span class="card-action">Select Plan &rarr;</span>
+      </div>
+
+      <div class="audience-card active" onclick="selectCard(this, 'Freelancers')">
+        <span class="badge-metric">+6,800 Freelancers</span>
+        <h3>Freelancers</h3>
+        <p>Send branded invoices, accept global cards, and enjoy low fee transfers directly to your bank.</p>
+        <span class="card-action">Select Plan &rarr;</span>
+      </div>
+
+      <div class="audience-card" onclick="selectCard(this, 'Enterprises')">
+        <span class="badge-metric">+800 Enterprises</span>
+        <h3>Enterprises</h3>
+        <p>Multi-currency routing, high-volume batch processing, custom SLAs, and dedicated compliance.</p>
+        <span class="card-action">Select Plan &rarr;</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-container">
+    <div class="dual-showcase">
+      <div class="showcase-text">
+        <h2>Rewards That are Endlessly Rewarding For Every Transaction</h2>
+        <p>Earn cashback, get real-time exchange rates, and automate reconciliation directly into your balance with every customer invoice paid.</p>
+        <p>Try the live interactive invoice simulator on the right to test transaction confirmation feedback.</p>
+      </div>
+
+      <div class="invoice-card">
+        <div class="invoice-header">
+          <div>
+            <strong>Invoice #GB-8921</strong>
+            <div style="font-size: 0.8rem; color: #64748b;">Due Date: Today</div>
+          </div>
+          <span class="invoice-badge">PENDING PAYMENT</span>
+        </div>
+
+        <div class="invoice-total">$350.00 USD</div>
+
+        <form id="paymentForm" onsubmit="handlePayment(event)">
+          <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" value="4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label>Expiry Date</label>
+              <input type="text" value="12/28" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>CVV</label>
+              <input type="password" value="888" maxlength="4" required>
+            </div>
+          </div>
+          <button type="submit" id="payInvoiceBtn" class="pay-btn">Pay Invoice ($350.00)</button>
+        </form>
+
+        <div id="paymentResult" class="payment-status-box"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-container" id="security">
+    <div class="security-section">
+      <h2>Keep Your Money Secure Always</h2>
+      <p>Bank-grade encryption, biometric confirmations, and instant anomaly fraud detection protecting your business assets 24/7.</p>
+      
+      <div class="security-hub">
+        <div class="hub-label">Total Vault Protection</div>
+        <div class="hub-balance" id="vaultDisplay">$3,050.00</div>
+        <div class="hub-label">Status: Active & Encrypted</div>
+        <div class="hub-actions">
+          <button class="hub-btn" onclick="simulateTransfer(50)">+ Quick Deposit ($50)</button>
+          <button class="hub-btn" onclick="simulateTransfer(-50)">- Withdraw ($50)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Gabrun Payment Technologies, Inc. All rights reserved. Demo dummy prototype.</p>
+  </footer>
+
+  <script>
+    function handleCtaSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('userEmail').value;
+      const feedback = document.getElementById('ctaFeedback');
+      feedback.textContent = `Terima kasih! Undangan telah dikirim ke: ${email}`;
+      document.getElementById('userEmail').value = '';
+    }
+
+    function selectCard(cardElement, planName) {
+      document.querySelectorAll('.audience-card').forEach(c => c.classList.remove('active'));
+      cardElement.classList.add('active');
+      const feedback = document.getElementById('ctaFeedback');
+      feedback.textContent = `Paket terpilih: ${planName}`;
+    }
+
+    function handlePayment(e) {
+      e.preventDefault();
+      const btn = document.getElementById('payInvoiceBtn');
+      const resultBox = document.getElementById('paymentResult');
+
+      btn.disabled = true;
+      btn.innerText = 'Memproses Transaksi...';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerText = 'Lakukan Pembayaran Lain';
+        resultBox.className = 'payment-status-box success';
+        resultBox.innerHTML = `✔ <strong>Payment Successfully!</strong><br>Invoice $350.00 USD berhasil dibayar pada ${new Date().toLocaleTimeString()}.`;
+      }, 1000);
+    }
+
+    let vaultBalance = 3050;
+    function simulateTransfer(amount) {
+      vaultBalance += amount;
+      document.getElementById('vaultDisplay').textContent = `$${vaultBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    }
+
+    function triggerAlert(msg) {
+      alert(msg);
+    }
+  </script>
+</body>
+</html>
